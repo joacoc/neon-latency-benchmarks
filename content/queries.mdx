@@ -1,0 +1,21 @@
+
+# Queries
+
+Once a connection between client and host is established, queries are a straightforward request/response process.
+
+```javascript
+import pg from "pg";
+const { Client } = pg;
+const client = new Client();
+await client.connect();
+const res = await client.query("SELECT * from table where id=1"); // [!code focus]
+console.log(res.rows[0]);
+await client.end();
+```
+
+Query latency depends on two factors:
+
+1. **Client\<\>Database proximity** - The network latency
+1. **Query Complexity** - A complex SQL query requires more work from the database before responding.
+
+---

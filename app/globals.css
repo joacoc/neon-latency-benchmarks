@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+::selection {
+    background: oklch(var(--a));
+    color: oklch(var(--ac));
+  }
+
+.has-highlighted .highlighted {
+    background-color: oklch(var(--a)/ .2);
+    transition: background-color .5s;
+    margin: 0 -16px;
+    padding: 0 16px;
+    width: calc(100% + 32px);
+    display: inline-block;
+}
+
+pre.has-focused .line:not(.focused) {
+  filter: blur(.095rem);
+  opacity: .7;
+  transition: filter .35s, opacity .35s;
+}
+
+pre.has-focused:hover .line:not(.focused) {
+  filter: blur(0);
+  opacity: 1;
+}

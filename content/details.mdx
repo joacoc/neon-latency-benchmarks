@@ -1,0 +1,115 @@
+import SingleStat from "@/components/singleStat";
+
+### Scale to zero
+
+When a Neon compute endpoint hasn't received any connections for a specified amount of time, it can [autosuspend](https://neon.tech/docs/introduction/auto-suspend).
+This is useful for:
+
+-  **Resource Management** - Turning off unused databases is automatic.
+- **Cost-Efficiency** - Never pay for compute that's not serving queries.
+
+But scale to zero is only useful if compute can start up quickly again when it's needed. That's why cold start times are so important.
+
+### Applications of scale to zero
+
+Look at the cold start times documented above and decide: _In what scenarios is the occasional <SingleStat stat="p50" /> of additional latency acceptable?_
+
+The answer depends on the specifics of your project.
+Here are some example scenarios where scale to zero may be useful:
+
+- **Non-Production Databases** - Development, preview, staging, test databases.
+- **Internal Apps** - If the userbase for your app is a limited number of employees, the db is likely idle more than active.
+- **Database-per-user Architectures** - Instead of having a single database for all users, if you have a separate database for each user, the activity level of any one database may be low enough that scale to zero results in significant cost reduction.
+- **Small Projects** - For small projects, configuring the production database to scale to zero can make it more cost-efficient without major impact to UX.
+
+---
+
+# Benchmark methodology
+
+To gather real-world cold start times, the benchmark uses a Neon project with a separate [database branch](https://neon.tech/docs/introduction/branching) for each of the above variants. A [node.js script](https://github.com/joacoc/neon-query-benchmarks/blob/main/setup/index.js) executes the following steps for every branch every 30 minutes:
+
+1. Check that the database branch is autosuspended
+1. Connect to the branch, forcing it to start. - The connect time (see below) is subtracted from this time to establish the [Cold Start](#cold-starts) time.*
+1. Run ten queries on the active database. - The results are recorded as the **[Query](#queries)** time.
+1. Connect and disconnect ten times to measure connect times - The results are recorded as the **[Connect](#connections)** time.
+3. Log all the timings to the main database.
+4. Suspend the database branch.
+
+\* **Why subtract connect from cold start?** - From the client, the only way to establish a cold start time is to connect to the database while it is suspended. That time 
+
+### Calculating Results
+
+The cold start duration for every benchmark run is saved in a table.
+To calculate the results, results are fetched and the [`simple-statistics`](https://simple-statistics.github.io/) library is used to calculate P50, P99, and Standard Deviation of results.
+
+The code where the results are calculated can be found [here](https://github.com/joacoc/neon-query-benchmarks/blob/main/hooks/index.tsx#L126-L134).
+
+### Benchmark Code
+
+All code for the benchmark and display of results is available [on GitHub](https://github.com/joacoc/neon-query-benchmarks/blob/main/setup/index.js) Here is a snippet showing how the timing of the cold start is measured:
+
+**Cold Start Timing:**
+```javascript
+// Cold Start + Connect (where the database starts out suspended)
+const coldTimeStart = Date.now(); // <-- Start timer
+await benchClient.connect(); // <-- Connect
+let coldConnectMs = Date.now() - coldTimeStart; // <-- Stop timer
+```
+
+**Connect Timing:**
+```javascript
+const hotConnectTimes = [];
+for (let i = 0; i < 10; i++) {
+  const benchClient = new DRIVERS[driver](connection_details);
+  const start = Date.now(); // <-- Start timer
+  await benchClient.connect(); // <-- Connect
+  hotConnectTimes.push(Date.now() - start); // <-- Stop timer
+  await benchClient.query(benchmarkQuery); // <-- Query
+  await benchClient.end();
+}
+```
+
+**Query Timing:**
+```javascript
+await benchClient.connect(); // <-- Connect
+...
+const hotQueryTimes = [];
+for (let i = 0; i < 10; i++) {
+  const start = Date.now(); // <-- Start timer
+  await benchClient.query(benchmarkQuery); // <-- Query
+  hotQueryTimes.push(Date.now() - start); // <-- Stop timer
+}
+```
+
+### Benchmark Specifications
+
+<dl>
+    <dt>Database Compute Size:</dt>
+    <dd>Defaults to 0.25 CU (0.25 vCPU, 1GB RAM), with one test using 2 CU</dd>
+    <dt>Database Region:</dt>
+    <dd>AWS US-East-2 (Ohio)</dd>
+    <dt>Benchmark Client Region:</dt>
+    <dd>AWS US-East-2 (Ohio)</dd>
+    <dt>Postgres Connection Type:</dt>
+    <dd>Defaults to direct, with one test using <a href="https://neon.tech/docs/connect/connection-pooling">Pooled</a></dd>
+    <dt>Postgres Version:</dt>
+    <dd>PostgreSQL 16</dd>
+    <dt>Postgres Driver:</dt>
+    <dd>Defaults to <a href="https://node-postgres.com/">node-postgres</a>, with one test using [Neon Serverless Driver](https://github.com/neondatabase/serverless)</dd>
+
+</dl>
+
+---
+
+# Try It Yourself
+
+Sign up for the [free Neon account](https://neon.tech), clone the repo for this benchmark and website: [Neon Cold Start Repo](https://github.com/joacoc/neon-query-benchmarks) and you can run and modify the benchmarks yourself.
+Follow the developer docs in the repo to get started.
+
+Keep in mind that benchmarks run locally will include the roundtrip latency from your device to AWS datacenter. The cold starts from this page are deployed in a Lambda in the same AWS region as the Neon database.
+
+---
+
+#### Credits
+
+Created by [`joacoc`](https://github.com/joacoc) with input and help from the [Neon team](https://github.com/orgs/neondatabase/people).

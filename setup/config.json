@@ -1,0 +1,150 @@
+{
+    "branches": [
+        {
+            "name": "Static Select",
+            "description": "Uses `SELECT 1` as the query - no data is scanned.",
+            "setupQueries": [
+                "CREATE TABLE IF NOT EXISTS series (id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, value TEXT);",
+                "INSERT INTO series (value) SELECT repeat('NEON', 300) from generate_series(0, 9000);"
+            ],
+            "benchmarkQuery": "SELECT 1;",
+            "driver": "pg",
+            "pooled_connection": false,
+            "minCU": 0.25
+        },
+        {
+            "name": "Select from 100MB Database",
+            "description": "Runs a lookup by primary key from 100MB database.",
+            "setupQueries": [
+                "CREATE TABLE IF NOT EXISTS series (id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, value TEXT);",
+                "INSERT INTO series (value) SELECT repeat('NEON', 300) from generate_series(0, 400000);"
+            ],
+            "benchmarkQuery": "SELECT * FROM series WHERE id = 10;",
+            "driver": "pg",
+            "pooled_connection": false,
+            "is_default": true,
+            "minCU": 0.25
+        },
+        {
+            "name": "Select from 5GB Database",
+            "description": "Runs a lookup by primary key from 5GB database.",
+            "setupQueries": [
+                "CREATE TABLE IF NOT EXISTS series (id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, value TEXT);",
+                "INSERT INTO series (value) SELECT repeat('NEON', 300) from generate_series(0, 4000000);"
+            ],
+            "benchmarkQuery": "SELECT * FROM series WHERE id = 100;",
+            "driver": "pg",
+            "pooled_connection": false,
+            "minCU": 0.25
+        },
+        {
+            "name": "Using Extensions",
+            "description": "Runs a lookup by primary key on a database with 60 extensions installed.",
+            "setupQueries": [
+                "CREATE EXTENSION fuzzystrmatch;",
+                "CREATE EXTENSION address_standardizer;",
+                "CREATE EXTENSION postgis;",
+                "CREATE EXTENSION postgis_raster;",
+                "CREATE EXTENSION postgis_sfcgal;",
+                "CREATE EXTENSION postgis_tiger_geocoder;",
+                "CREATE EXTENSION postgis_topology;",
+                "CREATE EXTENSION address_standardizer_data_us;",
+                "CREATE EXTENSION autoinc;",
+                "CREATE EXTENSION bloom;",
+                "CREATE EXTENSION btree_gin;",
+                "CREATE EXTENSION btree_gist;",
+                "CREATE EXTENSION citext;",
+                "CREATE EXTENSION cube;",
+                "CREATE EXTENSION dict_int;",
+                "CREATE EXTENSION earthdistance;",
+                "CREATE EXTENSION h3;",
+                "CREATE EXTENSION h3_postgis;",
+                "CREATE EXTENSION hll;",
+                "CREATE EXTENSION hstore;",
+                "CREATE EXTENSION hypopg;",
+                "CREATE EXTENSION insert_username;",
+                "CREATE EXTENSION intagg;",
+                "CREATE EXTENSION intarray;",
+                "CREATE EXTENSION ip4r;",
+                "CREATE EXTENSION isn;",
+                "CREATE EXTENSION lo;",
+                "CREATE EXTENSION ltree;",
+                "CREATE EXTENSION moddatetime;",
+                "CREATE EXTENSION \"pg_hint_plan\";",
+                "CREATE EXTENSION \"pg_ivm\";",
+                "CREATE EXTENSION \"pg_jsonschema\";",
+                "CREATE EXTENSION \"pg_prewarm\";",
+                "CREATE EXTENSION \"pg_stat_statements\";",
+                "CREATE EXTENSION \"pg_tiktoken\";",
+                "CREATE EXTENSION \"pg_trgm\";",
+                "CREATE EXTENSION \"pg_uuidv7\";",
+                "CREATE EXTENSION \"pgcrypto\";",
+                "CREATE EXTENSION \"pgjwt\";",
+                "CREATE EXTENSION \"pgrouting\";",
+                "CREATE EXTENSION \"pgrowlocks\";",
+                "CREATE EXTENSION \"pgstattuple\";",
+                "CREATE EXTENSION \"pgtap\";",
+                "CREATE EXTENSION \"plcoffee\";",
+                "CREATE EXTENSION \"plls\";",
+                "CREATE EXTENSION \"plv8\";",
+                "CREATE EXTENSION \"prefix\";",
+                "CREATE EXTENSION \"rdkit\";",
+                "CREATE EXTENSION \"refint\";",
+                "CREATE EXTENSION \"roaringbitmap\";",
+                "CREATE EXTENSION \"rum\";",
+                "CREATE EXTENSION \"seg\";",
+                "CREATE EXTENSION \"tablefunc\";",
+                "CREATE EXTENSION \"tcn\";",
+                "CREATE EXTENSION \"timescaledb\";",
+                "CREATE EXTENSION \"tsm_system_rows\";",
+                "CREATE EXTENSION \"tsm_system_time\";",
+                "CREATE EXTENSION \"unaccent\";",
+                "CREATE EXTENSION \"unit\";",
+                "CREATE EXTENSION \"uuid-ossp\";",
+                "CREATE EXTENSION \"xml2\";",
+                "CREATE TABLE IF NOT EXISTS series (id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, value TEXT);",
+                "INSERT INTO series (value) SELECT repeat('NEON', 300) from generate_series(0, 9000);"
+            ],
+            "benchmarkQuery": "SELECT * FROM series WHERE id = 10;",
+            "driver": "pg",
+            "pooled_connection": false,
+            "minCU": 0.25
+        },
+        {
+            "name": "Select via Serverless Driver",
+            "description": "Uses the serverless driver to lookup by primary key from 100MB database.",
+            "setupQueries": [
+                "CREATE TABLE IF NOT EXISTS series (id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, value TEXT);",
+                "INSERT INTO series (value) SELECT repeat('NEON', 300) from generate_series(0, 400000);"
+            ],
+            "benchmarkQuery": "SELECT * FROM series WHERE id = 10;",
+            "driver": "neon",
+            "pooled_connection": true,
+            "minCU": 0.25
+        },
+        {
+            "name": "Select via Pooled Connection",
+            "description": "Uses the pooled connection to lookup by primary key from 100MB database.",
+            "setupQueries": [
+                "CREATE TABLE IF NOT EXISTS series (id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, value TEXT);",
+                "INSERT INTO series (value) SELECT repeat('NEON', 300) from generate_series(0, 400000);"
+            ],
+            "benchmarkQuery": "SELECT * FROM series WHERE id = 10;",
+            "driver": "pg",
+            "pooled_connection": true,
+            "minCU": 0.25
+        },
+        {
+            "name": "Select on a larger compute",
+            "description": "Runs a lookup by primary key on a database that is set to default to 2 CU.",
+            "setupQueries": [
+                "CREATE TABLE IF NOT EXISTS series (id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, value TEXT);",
+                "INSERT INTO series (value) SELECT repeat('NEON', 300) from generate_series(0, 400000);"
+            ],
+            "benchmarkQuery": "SELECT * FROM series WHERE id = 10;",
+            "driver": "pg",
+            "pooled_connection": false,
+            "minCU": 2
+        }
+    ]
+}

@@ -1,0 +1,7 @@
+# Cold Starts
+
+A cold start in Neon begins when a database project with a suspended compute endpoint receives a connection.
+Neon starts the database compute, processes the query, and serves the response.
+The compute stays active as long as there are active connections.
+
+Try running a query to get a visual of how it works:

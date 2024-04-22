@@ -1,0 +1,37 @@
+import ConnectionsTable from "@/components/connectionsTable";
+
+# Connections
+
+Before querying a Postgres database, a connection must be established.
+
+```javascript
+import pg from "pg";
+const { Client } = pg;
+const client = new Client("...");
+await client.connect();  // [!code focus]
+const res = await client.query("SELECT * from table where id=1");
+console.log(res.rows);
+await client.end();
+```
+
+When a connection is initiated _(via `client.connect()` in the Node.JS example above)_, several steps and network roundtrips must happen before the connection is ready:
+
+1. **DNS lookup**
+2. **TCP connection**
+3. **TLS Negotiation**
+4. **Postgres Auth and Connection**
+
+Each of these steps involves at least one trip between client and host. That makes **Client\<\>Database proximity** the primary factor in time required to establish a connection.
+
+This benchmark runs the client in the same AWS region as the Neon Project in order to reduce connection latency.
+
+### Connections via Serverless Driver
+
+Neon has a [serverless driver](https://neon.tech/docs/serverless/serverless-driver) that extends the standard node-postgres driver `pg` to work over HTTP and WebSockets instead of TCP.
+Establishing a connection via the serverless driver is often faster because of [optimizations that reduce the roundtrips required](https://neon.tech/blog/quicker-serverless-postgres).
+
+Data from this benchmarks shows the following difference in connection times between the two drivers:
+
+<ConnectionsTable />
+
+---
