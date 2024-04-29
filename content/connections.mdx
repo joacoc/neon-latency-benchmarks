@@ -14,7 +14,7 @@ console.log(res.rows);
 await client.end();
 ```
 
-When a connection is initiated _(via `client.connect()` in the Node.JS example above)_, several steps and network roundtrips must happen before the connection is ready:
+To create a connection _(via `client.connect()` in the Node.JS example above)_, several steps and network roundtrips must happen:
 
 1. **DNS lookup**
 2. **TCP connection**

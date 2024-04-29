@@ -146,6 +146,7 @@ const Chart = (props: Props) => {
           y: {
             stacked: true,
             beginAtZero: true,
+            min: 0,
             suggestedMax: minimalistic
               ? (activeSeries.cold_start ? 500 : 0) +
                 (activeSeries.connect ? 400 : 0) +

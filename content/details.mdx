@@ -26,16 +26,15 @@ Here are some example scenarios where scale to zero may be useful:
 
 # Benchmark methodology
 
-To gather real-world cold start times, the benchmark uses a Neon project with a separate [database branch](https://neon.tech/docs/introduction/branching) for each of the above variants. A [node.js script](https://github.com/joacoc/neon-query-benchmarks/blob/main/setup/index.js) executes the following steps for every branch every 30 minutes:
+To gather real-world cold start times, the benchmark uses a Neon project with a separate [database branch](https://neon.tech/docs/introduction/branching) for each of the above variants.
+A [node.js script](https://github.com/joacoc/neon-query-benchmarks/blob/main/setup/index.js) executes the following steps for every branch every 30 minutes:
 
-1. Check that the database branch is autosuspended
-1. Connect to the branch, forcing it to start. - The connect time (see below) is subtracted from this time to establish the [Cold Start](#cold-starts) time.*
-1. Run ten queries on the active database. - The results are recorded as the **[Query](#queries)** time.
+1. Check that database branch is autosuspended
+1. Connect to branch, forcing it to start. - connect time is subtracted from this time to establish the [Cold Start](#cold-starts) time. *See [Limitations](#limitations-improvements)
+1. Run ten queries on active database. - results recorded as **[Query](#queries)** time.
 1. Connect and disconnect ten times to measure connect times - The results are recorded as the **[Connect](#connections)** time.
-3. Log all the timings to the main database.
-4. Suspend the database branch.
-
-\* **Why subtract connect from cold start?** - From the client, the only way to establish a cold start time is to connect to the database while it is suspended. That time 
+1. Log all the timings to main database.
+1. Suspend the database branch.
 
 ### Calculating Results
 
@@ -43,6 +42,21 @@ The cold start duration for every benchmark run is saved in a table.
 To calculate the results, results are fetched and the [`simple-statistics`](https://simple-statistics.github.io/) library is used to calculate P50, P99, and Standard Deviation of results.
 
 The code where the results are calculated can be found [here](https://github.com/joacoc/neon-query-benchmarks/blob/main/hooks/index.tsx#L126-L134).
+
+### Limitations, Improvements
+
+**Zeroing in on Cold Starts:**
+
+Because cold starts only happen when a connection is initiated, there is no good way to measure _"just the cold start."_
+In this benchmark, we try and zero in on the cold start by looking at the difference between time required to connect to an inactive instance vs an active instance.
+After running the test for weeks, we sometimes see a combination of very fast cold start (200ms) and very slow connections to hot instance (300ms) resulting in the results for cold start times showing a _negative_ number.
+
+There might be a better way to zero in cold-starts. 
+We've stuck to this way of measuring (as opposed to using Neon API timings or audit log data) to try and create a benchmark that is most reflective of real-world user experience.
+
+**Comparing latency across platforms:**
+
+This benchmark uses an EC2 instance in the same region as the database. It would be useful to compare latency when connecting to Neon from other platforms, other regions, etc...
 
 ### Benchmark Code
 
