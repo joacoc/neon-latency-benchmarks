@@ -9,7 +9,7 @@ require('dotenv').config();
  */
 const API_KEY = process.env["API_KEY"];
 const PROJECT_REGION = process.env["PROJECT_REGION"] || "aws-us-east-2";
-const PROJECT_NAME = process.env["PROJECT_NAME"] || "QueryBenchmarks";
+const PROJECT_NAME = process.env["PROJECT_NAME"] || "LatencyBenchmarks";
 const DATABASE_NAME = process.env["DATABASE_NAME"] || "neondb";
 const ROLE_NAME = process.env["ROLE_NAME"] || "BenchmarkRole";
 
