@@ -396,12 +396,12 @@ export default function Analytics() {
       <div>
         <h3 className="text-3xl font-bold">Latency by Database Variant</h3>
         <p className="text-base-content/70">
-          How does query latency compare across different sizes and
+          How do latencies compare across different sizes and
           configurations of database?
         </p>
         <div className="h-64 my-12">
           <BarChart
-            title="Comparison of Query Latency by Database Variant"
+            title="Comparison of Latencies by Database Variant"
             chartData={{
               labels: benchmark?.branches.map((br) => {
                 return br.name;
@@ -418,7 +418,7 @@ export default function Analytics() {
           Detailed Stats by Database Variant
         </h3>
         <p className="text-base-content/70">
-          Query latencies for specific variations of Neon databases.
+          Latencies for specific variations of Neon databases.
         </p>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-10">
           {benchmark &&

@@ -13,7 +13,7 @@ console.log(res.rows[0]);
 await client.end();
 ```
 
-Query latency depends on two factors:
+Latencies depend on two factors:
 
 1. **Client\<\>Database proximity** - The network latency
 1. **Query Complexity** - A complex SQL query requires more work from the database before responding.

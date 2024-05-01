@@ -11,9 +11,9 @@ export default function Home() {
       {/* Header */}
       <section className="flex flex-col lg:flex-row w-full items-center justify-between gap-4">
         <div>
-          <h1 className="text-5xl font-bold">Neon Query Benchmarks</h1>
+          <h1 className="text-5xl font-bold">Neon Latency Benchmarks</h1>
           <div className="mt-4 max-w-2xl text-base-content/70">
-            An open-source project tracking real-world experience for query latency on 
+            An open-source project tracking real-world latency experiences on 
             {' '}<a className="link link-info" href="https://neon.tech">
               Neon Postgres
             </a>.
@@ -21,7 +21,7 @@ export default function Home() {
           </div>
         </div>
         <a
-          href="https://github.com/joacoc/neon-query-benchmarks"
+          href="https://github.com/joacoc/neon-latency-benchmarks"
           target="_blank"
           className="text-base-content hover:text-primary order-first lg:order-none transition-colors"
         >

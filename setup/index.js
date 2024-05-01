@@ -1,5 +1,5 @@
-const { Pool: PgPool, Client: PgClient } = require("pg");
-const { neon, Client: NeonClient, neonConfig } = require("@neondatabase/serverless");
+const { Client: PgClient } = require("pg");
+const { Client: NeonClient, neonConfig } = require("@neondatabase/serverless");
 const ws = require("ws");
 const { createApiClient } = require("@neondatabase/api-client");
 const { readFileSync } = require("fs");
@@ -22,7 +22,7 @@ const configFile = JSON.parse(
  * Benchmark database
  */
 const API_KEY = process.env["API_KEY"];
-const PROJECT_NAME = process.env["PROJECT_NAME"] || "QueryBenchmarks";
+const PROJECT_NAME = process.env["PROJECT_NAME"] || "LatencyBenchmarks";
 const DATABASE_NAME = process.env["DATABASE_NAME"] || "neondb";
 const ROLE_NAME = process.env["ROLE_NAME"] || "BenchmarkRole";
 const MAIN_BRANCH_NAME = process.env["BENCHMARK_BRANCH_NAME"] || "main";
@@ -379,6 +379,7 @@ const benchmarkProject = async ({ id: projectId }, apiClient, runId) => {
       if(driver === 'neon') coldConnectMs -= hotQueryTimes.reduce((a, b) => a + b, 0) / hotQueryTimes.length;
 
       // Hot Connects (where the database is active, but a connection must first be established)
+      // There are better ways, not yet tested, to measure these values as for example 
       const hotConnectTimes = [];
       for (let i = 0; i < 10; i++) {
         const benchClient = new DRIVERS[driver](connection_details);
