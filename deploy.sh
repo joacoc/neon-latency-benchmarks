@@ -15,8 +15,7 @@ TASK_DEFINITION_FILE=setup/task-definition.json
 TASK_DEFINITION_IMAGE=joaco36/neon-latency-benchmarks:latest
 
 if [[ "$ACTION" == "delete" ]]; then
-    echo "(1/3) Deleting ECS cluster."
-    aws ecs list-tasks --cluster $CLUSTER_NAME --query 'taskArns[]' --output text | xargs -I{} aws ecs stop-task --cluster "$CLUSTER_NAME" --task {} > /dev/null 
+    echo "(1/3) Deleting ECS cluster." 
     aws ecs delete-cluster --cluster $CLUSTER_NAME > /dev/null
 
     echo "(2/3) Deleting role."
@@ -51,7 +50,7 @@ else
     else
         case "$answer" in
             y|Y)
-                :
+                echo ""
                 ;;
             n|N)
                 exit 0
