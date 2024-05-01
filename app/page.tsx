@@ -21,7 +21,7 @@ export default function Home() {
           </div>
         </div>
         <a
-          href="https://github.com/joacoc/neon-query-benchmarks"
+          href="https://github.com/joacoc/neon-latency-benchmarks"
           target="_blank"
           className="text-base-content hover:text-primary order-first lg:order-none transition-colors"
         >

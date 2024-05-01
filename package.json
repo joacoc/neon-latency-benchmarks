@@ -10,7 +10,6 @@
         "setup": "node setup/init.js",
         "benchmark": "node -e \"require('./setup/index').handler()\"",
         "deploy": "chmod +x deploy.sh && ./deploy.sh",
-        "update_deploy": "chmod +x deploy.sh && ./deploy.sh update",
         "delete_deploy": "chmod +x deploy.sh && ./deploy.sh delete"
     },
     "dependencies": {

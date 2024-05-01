@@ -1,4 +1,4 @@
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fjoacoc%2Fneon-query-benchmarks&env=CONNECTION_STRING&envDescription=Connection%20string%20returned%20by%20the%20setup%20step)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fjoacoc%2Fneon-latency-benchmarks&env=CONNECTION_STRING&envDescription=Connection%20string%20returned%20by%20the%20setup%20step)
 
 This is a [Neon](http://neon.tech) tool to benchmark Neon latencies.
 
@@ -22,45 +22,6 @@ This is a [Neon](http://neon.tech) tool to benchmark Neon latencies.
     npm run serve
     ```
 6. Open [http://localhost:3000](http://localhost:3000) with your browser to view the results. 
-
-### Benchmark recurrently
-
-The following command will configure AWS to schedule a benchmark using Lambda every 30 minutes:
-
-```bash
-# Make sure to have installed and configured the latest AWS CLI (https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
-npm run deploy
-```
-
-<details>
-<summary>Instructions</summary>
-<br>
-
-```bash
-# 1. Load env. vars:
-source .env
-
-# 2. Zip the code:
-zip -j lambda.zip ./setup/index.js && zip -j lambda.zip ./setup/config.json && zip -rq lambda.zip node_modules -x "*next*" -x "typescript" -x "*chartjs*"
-
-# 3. Create a role and attach the policy:
-ROLE_ARN=$(aws iam create-role --role-name neon-benchmark-lambda-execute-role --assume-role-policy-document file://setup/trust-policy.json --query 'Role.Arn' --output text)
-aws iam attach-role-policy --role-name neon-benchmark-lambda-execute-role --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaRole
-aws iam attach-role-policy --role-name neon-benchmark-lambda-execute-role --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-
-# 4. Upload the lambda code:
-LAMBDA_ARN=$(aws lambda create-function --function-name BenchmarkRunner --runtime nodejs20.x --role $ROLE_ARN --handler index.handler --timeout 240 --zip-file fileb://lambda.zip --query 'FunctionArn' --output text --environment Variables={API_KEY=$API_KEY})
-
-# 5. Schedule every 30 minutes:
-aws scheduler create-schedule \
-    --name NeonColdBenchmarkScheduler \
-    --schedule-expression "rate(30 minutes)" \
-    --target "{\"RoleArn\": \"$ROLE_ARN\", \"Arn\":\"$LAMBDA_ARN\" }" \
-    --flexible-time-window '{ "Mode": "FLEXIBLE", "MaximumWindowInMinutes": 15}'
-```
-</details>
-
-This will generate enough datapoints throughout the day to calculate the average time for your own queries.
 
 ## Setup
 
@@ -107,6 +68,39 @@ CREATE TABLE IF NOT EXISTS benchmarks (
 ## Application
 
 The web app will query the benchmarks stored in the _main_ branch, calculate basic metrics (p50, p99, stddev), and display them on a chart to give an overview of the query durations.
+
+## Deployment
+
+The following command will configure AWS to schedule a benchmark using ECS Fargate every 30 minutes:
+
+```bash
+# Make sure to have installed and configured the latest AWS CLI (https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
+npm run deploy
+```
+
+This will generate enough datapoints throughout the day to calculate the average time for your own queries.
+
+If would like to customize and deploy a different image follow these instructions:
+
+<details>
+<summary>Instructions</summary>
+
+1. Fork the project.
+2. Create a new branch.
+3. Customize the benchmarks.
+4. Replace the repository and branch name in the Dockerfile.
+5. Build the Docker image:
+    ```bash
+    docker build --platform=linux/amd64 -t [your_username]/neon-latency-benchmarks:latest .
+    ```
+6. Push the Docker image:
+    ```bash
+    docker push [your_username]/neon-latency-benchmarks:latest
+    ```
+7. Run `npm run deploy`.
+
+<br>
+</details>
 
 ## Learn More
 

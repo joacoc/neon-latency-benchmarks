@@ -1,0 +1,47 @@
+{
+    "family": "Benchmark",
+    "containerDefinitions": [
+        {
+            "name": "Benchmark",
+            "image": "$TASK_DEFINITION_IMAGE",
+            "cpu": 256,
+            "memory": 1024,
+            "memoryReservation": 1024,
+            "portMappings": [],
+            "essential": true,
+            "environment": [
+                {
+                    "name": "API_KEY",
+                    "value": "$API_KEY"
+                }
+            ],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/Benchmark",
+                    "awslogs-stream-prefix": "ecs",
+                    "awslogs-region": "$REGION"
+                },
+                "secretOptions": []
+            },
+            "systemControls": []
+        }
+    ],
+    "executionRoleArn": "$ROLE_ARN",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": [
+        "EC2",
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "1024",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    }
+}

@@ -26,7 +26,7 @@ Here are some example scenarios where scale to zero may be useful:
 
 # Benchmark methodology
 
-To gather real-world cold start times, the benchmark uses a Neon project with a separate [database branch](https://neon.tech/docs/introduction/branching) for each of the above variants. A [node.js script](https://github.com/joacoc/neon-query-benchmarks/blob/main/setup/index.js) executes the following steps for every branch every 30 minutes:
+To gather real-world cold start times, the benchmark uses a Neon project with a separate [database branch](https://neon.tech/docs/introduction/branching) for each of the above variants. A [node.js script](https://github.com/joacoc/neon-latency-benchmarks/blob/main/setup/index.js) executes the following steps for every branch every 30 minutes:
 
 1. Check that the database branch is autosuspended
 1. Connect to the branch, forcing it to start. - The connect time (see below) is subtracted from this time to establish the [Cold Start](#cold-starts) time.*
@@ -42,11 +42,11 @@ To gather real-world cold start times, the benchmark uses a Neon project with a 
 The cold start duration for every benchmark run is saved in a table.
 To calculate the results, results are fetched and the [`simple-statistics`](https://simple-statistics.github.io/) library is used to calculate P50, P99, and Standard Deviation of results.
 
-The code where the results are calculated can be found [here](https://github.com/joacoc/neon-query-benchmarks/blob/main/hooks/index.tsx#L126-L134).
+The code where the results are calculated can be found [here](https://github.com/joacoc/neon-latency-benchmarks/blob/main/hooks/index.tsx#L126-L134).
 
 ### Benchmark Code
 
-All code for the benchmark and display of results is available [on GitHub](https://github.com/joacoc/neon-query-benchmarks/blob/main/setup/index.js) Here is a snippet showing how the timing of the cold start is measured:
+All code for the benchmark and display of results is available [on GitHub](https://github.com/joacoc/neon-latency-benchmarks/blob/main/setup/index.js) Here is a snippet showing how the timing of the cold start is measured:
 
 **Cold Start Timing:**
 ```javascript
@@ -103,7 +103,7 @@ for (let i = 0; i < 10; i++) {
 
 # Try It Yourself
 
-Sign up for the [free Neon account](https://neon.tech), clone the repo for this benchmark and website: [Neon Cold Start Repo](https://github.com/joacoc/neon-query-benchmarks) and you can run and modify the benchmarks yourself.
+Sign up for the [free Neon account](https://neon.tech), clone the repo for this benchmark and website: [Neon Cold Start Repo](https://github.com/joacoc/neon-latency-benchmarks) and you can run and modify the benchmarks yourself.
 Follow the developer docs in the repo to get started.
 
 Keep in mind that benchmarks run locally will include the roundtrip latency from your device to AWS datacenter. The cold starts from this page are deployed in a Lambda in the same AWS region as the Neon database.
