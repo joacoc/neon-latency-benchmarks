@@ -41,7 +41,7 @@ A [node.js script](https://github.com/joacoc/neon-query-benchmarks/blob/main/set
 The cold start duration for every benchmark run is saved in a table.
 To calculate the results, results are fetched and the [`simple-statistics`](https://simple-statistics.github.io/) library is used to calculate P50, P99, and Standard Deviation of results.
 
-The code where the results are calculated can be found [here](https://github.com/joacoc/neon-query-benchmarks/blob/main/hooks/index.tsx#L126-L134).
+The code where the results are calculated can be found [here](https://github.com/joacoc/neon-latency-benchmarks/blob/main/hooks/index.tsx#L126-L134).
 
 ### Limitations, Improvements
 
@@ -60,7 +60,7 @@ This benchmark uses an EC2 instance in the same region as the database. It would
 
 ### Benchmark Code
 
-All code for the benchmark and display of results is available [on GitHub](https://github.com/joacoc/neon-query-benchmarks/blob/main/setup/index.js) Here is a snippet showing how the timing of the cold start is measured:
+All code for the benchmark and display of results is available [on GitHub](https://github.com/joacoc/neon-latency-benchmarks/blob/main/setup/index.js) Here is a snippet showing how the timing of the cold start is measured:
 
 **Cold Start Timing:**
 ```javascript
@@ -117,7 +117,7 @@ for (let i = 0; i < 10; i++) {
 
 # Try It Yourself
 
-Sign up for the [free Neon account](https://neon.tech), clone the repo for this benchmark and website: [Neon Cold Start Repo](https://github.com/joacoc/neon-query-benchmarks) and you can run and modify the benchmarks yourself.
+Sign up for the [free Neon account](https://neon.tech), clone the repo for this benchmark and website: [Neon Cold Start Repo](https://github.com/joacoc/neon-latency-benchmarks) and you can run and modify the benchmarks yourself.
 Follow the developer docs in the repo to get started.
 
 Keep in mind that benchmarks run locally will include the roundtrip latency from your device to AWS datacenter. The cold starts from this page are deployed in a Lambda in the same AWS region as the Neon database.

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-    title: "Neon Query Benchmarks",
+    title: "Neon Latency Benchmarks",
     description: "An open-source tool for understanding and benchmarking the connect, query and cold start timing of Neon projects.",
 };
 
