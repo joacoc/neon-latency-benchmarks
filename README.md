@@ -1,6 +1,6 @@
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fjoacoc%2Fneon-latency-benchmarks&env=CONNECTION_STRING&envDescription=Connection%20string%20returned%20by%20the%20setup%20step)
 
-This is a [Neon](http://neon.tech) tool to benchmark Neon latencies.
+This is a tool to benchmark [Neon](http://neon.tech) latencies.
 
 ## Getting Started
 
@@ -13,7 +13,7 @@ This is a [Neon](http://neon.tech) tool to benchmark Neon latencies.
     ```bash
     npm run setup
     ```
-4. Run a single benchmark:
+4. Run a couple benchmarks:
     ```bash
     npm run benchmark
     ```
@@ -25,11 +25,11 @@ This is a [Neon](http://neon.tech) tool to benchmark Neon latencies.
 
 ## Setup
 
-The setup command (`npm run setup`) will create a new Neon project with multiple branches configured in the `/setup/config.json` file. The project's _main_ branch will store the benchmark results, while the other branches will be used just for benchmarking.
+The setup command (`npm run setup`) will create a Neon project with multiple branches based [on this configuration file](https://github.com/joacoc/neon-latency-benchmarks/blob/main/setup/config.json). The _main_ branch is intended to store and serve the results from each benchmark, while the other branches are used solely to run benchmarks.
 
 ## Benchmark
 
-The benchmark is a Lambda function that suspends the compute resources of a branch and runs a benchmark query using `pg`, a [Node.JS Postgres client](https://github.com/brianc/node-postgres). The benchmark takes between two and three minutes. An example of a branch using the TimescaleDB extension would be as follows:
+The benchmark is a function that suspends the compute resources of a branch and runs a benchmark query using `pg`, a [Node.JS Postgres client](https://github.com/brianc/node-postgres). The benchmark takes between two and three minutes. An example of a branch using the TimescaleDB extension would be as follows:
 
 ```json
 {
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS benchmarks (
 
 ## Application
 
-The web app will query the benchmarks stored in the _main_ branch, calculate basic metrics (p50, p99, stddev), and display them on a chart to give an overview of the query durations.
+The web app will query the benchmarks stored in the _main_ branch, calculate basic metrics (p50, p99, stddev), and display them on a chart to give an overview of the query durations. The application needs at least two benchmarks to display information correctly.
 
 ## Deployment
 
@@ -78,9 +78,11 @@ The following command will configure AWS to schedule a benchmark using ECS Farga
 npm run deploy
 ```
 
-This will generate enough datapoints throughout the day to calculate the average time for your own queries.
+<img width="688" alt="Arch" src="https://github.com/joacoc/neon-latency-benchmarks/assets/11491779/ceeffb66-10b9-49db-b639-b010f66eab54">
 
-If would like to customize and deploy a different image follow these instructions:
+The scheduled benchmarks will generate enough data points throughout the day to calculate the average time for your queries.
+
+If you'd like to customize the benchmarks and deploy a different image, follow these instructions:
 
 <details>
 <summary>Instructions</summary>
@@ -101,6 +103,11 @@ If would like to customize and deploy a different image follow these instruction
 
 <br>
 </details>
+
+To destroy the deployment simply run:
+```bash
+npm run delete_deploy
+```
 
 ## Learn More
 
